@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Yatodo</string>
+    <string name="tasks_screen_title">Tasks</string>
 </resources>
