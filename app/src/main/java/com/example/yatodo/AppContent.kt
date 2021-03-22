@@ -6,15 +6,10 @@ import androidx.compose.runtime.Composable
 import com.example.yatodo.ui.theme.YatodoTheme
 
 @Composable
-fun AppContent() {
+fun AppContent(tasksViewModel: TasksViewModel) {
     YatodoTheme {
         Surface(color = MaterialTheme.colors.background) {
-            TasksScreen(
-                listOf(
-                    TaskData("Call him", false),
-                    TaskData("Visit her", true)
-                )
-            )
+            TasksScreen(tasksViewModel.viewState.value.tasks)
         }
     }
 }

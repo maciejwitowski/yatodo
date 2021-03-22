@@ -27,7 +27,10 @@ fun TasksScreen(tasks: List<TaskData>) {
     ) {
         Column {
             for (task in tasks) {
-                TaskItem(taskData = task)
+                TaskItem(
+                    taskData = task,
+                    onTaskDone = { isDone -> }
+                )
             }
         }
     }

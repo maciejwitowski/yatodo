@@ -7,10 +7,11 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun TaskItem(
-    taskData: TaskData
+    taskData: TaskData,
+    onTaskDone: (Boolean) -> Unit
 ) {
     Row {
-        Checkbox(checked = taskData.isDone, onCheckedChange = { /*TODO*/ })
+        Checkbox(checked = taskData.isDone, onCheckedChange = onTaskDone)
         Text(text = taskData.content)
     }
 }
