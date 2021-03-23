@@ -1,6 +1,11 @@
 package com.example.yatodo
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,27 +30,31 @@ fun TasksScreen(
     val viewState: ViewState by viewModel.viewState.observeAsState(ViewState(emptyList()))
 
     TasksScreenLayout {
-        AddTask { content -> viewModel.onViewAction(TaskAdd(content)) }
+        item {
+            AddTask { content -> viewModel.onViewAction(TaskAdd(content)) }
+        }
 
-        TasksContent(
-            viewState,
-            onTaskToggle = { taskId, isDone ->
-                viewModel.onViewAction(
-                    TaskToggle(
-                        taskId,
-                        isDone
-                    )
+        for (task in viewState.tasks) {
+            item {
+                TaskItem(
+                    taskData = task,
+                    onTaskToggle = { isDone ->
+                        viewModel.onViewAction(
+                            TaskToggle(
+                                task.id,
+                                isDone
+                            )
+                        )
+                    },
+                    onTaskDelete = { viewModel.onViewAction(TaskDelete(task.id)) }
                 )
-            },
-            onTaskDelete = { taskId ->
-                viewModel.onViewAction(TaskDelete(taskId))
             }
-        )
+        }
     }
 }
 
 @Composable
-fun TasksScreenLayout(content: @Composable () -> Unit) {
+fun TasksScreenLayout(content: LazyListScope.() -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -55,25 +64,9 @@ fun TasksScreenLayout(content: @Composable () -> Unit) {
             )
         },
     ) {
-        Column(Modifier.padding(8.dp)) {
+        LazyColumn(Modifier.padding(8.dp)) {
             content()
         }
-    }
-}
-
-
-@Composable
-fun TasksContent(
-    viewState: ViewState,
-    onTaskToggle: (Long, Boolean) -> Unit,
-    onTaskDelete: (Long) -> Unit
-) {
-    for (task in viewState.tasks) {
-        TaskItem(
-            taskData = task,
-            onTaskToggle = { isDone -> onTaskToggle(task.id, isDone) },
-            onTaskDelete = { onTaskDelete(task.id) }
-        )
     }
 }
 
