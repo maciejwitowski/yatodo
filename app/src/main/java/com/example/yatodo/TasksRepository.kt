@@ -8,12 +8,12 @@ class TasksRepository {
         flowOf(
             listOf(
                 TaskData(
-                    taskId = 1,
+                    id = 1,
                     content = "Call him",
                     isDone = false
                 ),
                 TaskData(
-                    taskId = 2,
+                    id = 2,
                     content = "Visit her",
                     isDone = true
                 )

@@ -1,7 +1,7 @@
 package com.example.yatodo
 
 data class TaskData(
-    val taskId: Long,
+    val id: Long,
     val content: String,
     val isDone: Boolean
 )
