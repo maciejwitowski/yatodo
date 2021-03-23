@@ -17,11 +17,11 @@ fun TaskItem(
     onTaskToggle: (Boolean) -> Unit,
     onTaskDelete: () -> Unit
 ) {
-    Row(Modifier.padding(8.dp)) {
+    Row(Modifier.padding(vertical = 8.dp)) {
         Checkbox(checked = taskData.isDone, onCheckedChange = onTaskToggle)
         Spacer(modifier = Modifier.width(4.dp))
         Text(text = taskData.content)
-        Spacer(modifier = Modifier.width(24.dp))
+        Spacer(modifier = Modifier.width(8.dp))
         DeleteTaskButton(onTaskDelete)
     }
 }

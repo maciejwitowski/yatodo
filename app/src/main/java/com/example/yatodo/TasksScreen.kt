@@ -1,12 +1,18 @@
 package com.example.yatodo
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.res.painterResource
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.example.yatodo.ViewAction.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
@@ -17,28 +23,29 @@ fun TasksScreen(
     viewModel: TasksViewModel
 ) {
     val viewState: ViewState by viewModel.viewState.observeAsState(ViewState(emptyList()))
-    TasksContent(
-        viewState,
-        onTaskToggle = { taskId, isDone ->
-            viewModel.onViewAction(
-                ViewAction.TaskToggle(
-                    taskId,
-                    isDone
+
+    TasksScreenLayout {
+        AddTask { content -> viewModel.onViewAction(TaskAdd(content)) }
+
+        TasksContent(
+            viewState,
+            onTaskToggle = { taskId, isDone ->
+                viewModel.onViewAction(
+                    TaskToggle(
+                        taskId,
+                        isDone
+                    )
                 )
-            )
-        },
-        onTaskDelete = { taskId ->
-            viewModel.onViewAction(ViewAction.TaskDelete(taskId))
-        }
-    )
+            },
+            onTaskDelete = { taskId ->
+                viewModel.onViewAction(TaskDelete(taskId))
+            }
+        )
+    }
 }
 
 @Composable
-fun TasksContent(
-    viewState: ViewState,
-    onTaskToggle: (Long, Boolean) -> Unit,
-    onTaskDelete: (Long) -> Unit
-) {
+fun TasksScreenLayout(content: @Composable () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -47,23 +54,59 @@ fun TasksContent(
                 }
             )
         },
-        floatingActionButton = {
-            FloatingActionButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_add_24),
-                    contentDescription = null
-                )
-            }
-        }
     ) {
-        Column {
-            for (task in viewState.tasks) {
-                TaskItem(
-                    taskData = task,
-                    onTaskToggle = { isDone -> onTaskToggle(task.id, isDone) },
-                    onTaskDelete = { onTaskDelete(task.id) }
-                )
-            }
+        Column(Modifier.padding(8.dp)) {
+            content()
         }
+    }
+}
+
+
+@Composable
+fun TasksContent(
+    viewState: ViewState,
+    onTaskToggle: (Long, Boolean) -> Unit,
+    onTaskDelete: (Long) -> Unit
+) {
+    for (task in viewState.tasks) {
+        TaskItem(
+            taskData = task,
+            onTaskToggle = { isDone -> onTaskToggle(task.id, isDone) },
+            onTaskDelete = { onTaskDelete(task.id) }
+        )
+    }
+}
+
+@Composable
+fun AddTask(
+    onTaskAdd: (String) -> Unit
+) {
+    var content by rememberSaveable { mutableStateOf("") }
+    var isError by rememberSaveable { mutableStateOf(false) }
+
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        OutlinedTextField(
+            value = content,
+            onValueChange = {
+                isError = false
+                content = it
+            },
+            label = { Text(stringResource(R.string.task_content_field)) },
+            isError = isError
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Button(
+            onClick = {
+                if (content.isBlank()) {
+                    isError = true
+                } else {
+                    onTaskAdd(content)
+                    content = ""
+                }
+            },
+            content = { Text(text = stringResource(R.string.add_task_button)) }
+        )
     }
 }

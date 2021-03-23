@@ -53,6 +53,15 @@ private fun ViewState.applyViewAction(viewAction: ViewAction): ViewState =
             val updatedTasks = tasks.filter { it.id != viewAction.taskId }
             ViewState(updatedTasks)
         }
+        is ViewAction.TaskAdd -> {
+            val highestId = tasks.map { it.id }.maxOrNull() ?: 1
+            val newTask = TaskData(
+                id = highestId.inc(),
+                content = viewAction.content,
+                isDone = false
+            )
+            ViewState(tasks + newTask)
+        }
     }
 
 private fun List<TaskData>.toggleTask(taskId: Long, isDone: Boolean): List<TaskData> =
@@ -69,4 +78,5 @@ data class ViewState(val tasks: List<TaskData>)
 sealed class ViewAction {
     data class TaskToggle(val taskId: Long, val isDone: Boolean) : ViewAction()
     data class TaskDelete(val taskId: Long) : ViewAction()
+    data class TaskAdd(val content: String) : ViewAction()
 }
