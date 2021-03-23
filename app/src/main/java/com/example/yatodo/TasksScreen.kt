@@ -17,20 +17,27 @@ fun TasksScreen(
     viewModel: TasksViewModel
 ) {
     val viewState: ViewState by viewModel.viewState.observeAsState(ViewState(emptyList()))
-    TasksContent(viewState) { taskId, isDone ->
-        viewModel.onViewAction(
-            ViewAction.TaskToggled(
-                taskId,
-                isDone
+    TasksContent(
+        viewState,
+        onTaskToggle = { taskId, isDone ->
+            viewModel.onViewAction(
+                ViewAction.TaskToggle(
+                    taskId,
+                    isDone
+                )
             )
-        )
-    }
+        },
+        onTaskDelete = { taskId ->
+            viewModel.onViewAction(ViewAction.TaskDelete(taskId))
+        }
+    )
 }
 
 @Composable
 fun TasksContent(
     viewState: ViewState,
-    onTaskToggle: (Long, Boolean) -> Unit
+    onTaskToggle: (Long, Boolean) -> Unit,
+    onTaskDelete: (Long) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -53,7 +60,8 @@ fun TasksContent(
             for (task in viewState.tasks) {
                 TaskItem(
                     taskData = task,
-                    onTaskDone = { isDone -> onTaskToggle(task.id, isDone) }
+                    onTaskToggle = { isDone -> onTaskToggle(task.id, isDone) },
+                    onTaskDelete = { onTaskDelete(task.id) }
                 )
             }
         }

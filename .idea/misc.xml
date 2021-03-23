@@ -8,6 +8,7 @@
         <entry key="../../../../../layout/custom_preview.xml" value="0.1" />
         <entry key="app/src/main/res/drawable-v24/baseline_add_24.xml" value="0.2601851851851852" />
         <entry key="app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.2222222222222222" />
+        <entry key="app/src/main/res/drawable/ic_baseline_delete_24.xml" value="0.21574074074074073" />
       </map>
     </option>
   </component>

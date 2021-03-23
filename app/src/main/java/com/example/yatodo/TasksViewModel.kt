@@ -45,8 +45,12 @@ class TasksViewModel(
 
 private fun ViewState.applyViewAction(viewAction: ViewAction): ViewState =
     when (viewAction) {
-        is ViewAction.TaskToggled -> {
+        is ViewAction.TaskToggle -> {
             val updatedTasks = tasks.toggleTask(viewAction.taskId, viewAction.isDone)
+            ViewState(updatedTasks)
+        }
+        is ViewAction.TaskDelete -> {
+            val updatedTasks = tasks.filter { it.id != viewAction.taskId }
             ViewState(updatedTasks)
         }
     }
@@ -63,5 +67,6 @@ private fun List<TaskData>.toggleTask(taskId: Long, isDone: Boolean): List<TaskD
 data class ViewState(val tasks: List<TaskData>)
 
 sealed class ViewAction {
-    data class TaskToggled(val taskId: Long, val isDone: Boolean) : ViewAction()
+    data class TaskToggle(val taskId: Long, val isDone: Boolean) : ViewAction()
+    data class TaskDelete(val taskId: Long) : ViewAction()
 }
