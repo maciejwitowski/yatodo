@@ -1,16 +1,17 @@
 package com.example.yatodo
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.scan
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.plus
 
 @FlowPreview
 @ExperimentalCoroutinesApi
@@ -22,47 +23,45 @@ class TasksViewModel(
     val viewState = MutableLiveData(ViewState(emptyList()))
 
     init {
-        viewModelScope.launch {
-            tasksRepository
-                .getTasks()
-                .flatMapLatest { tasks ->
-                    viewActions
-                        .asFlow()
-                        .scan(ViewState(tasks)) { state, viewAction ->
-                            state.applyViewAction(viewAction)
-                        }
-                }
-                .collect { state ->
-                    viewState.value = state
-                }
-        }
+        tasksRepository
+            .getAllTasks()
+            .onEach { tasks ->
+                viewState.value = ViewState(tasks)
+            }
+            .launchIn(viewModelScope)
+
+        viewActions
+            .asFlow()
+            .onEach { applyViewAction(it) }
+            .launchIn(viewModelScope + Dispatchers.IO)
     }
 
     fun onViewAction(viewAction: ViewAction) {
         viewActions.offer(viewAction)
     }
-}
 
-private fun ViewState.applyViewAction(viewAction: ViewAction): ViewState =
-    when (viewAction) {
-        is ViewAction.TaskToggle -> {
-            val updatedTasks = tasks.toggleTask(viewAction.taskId, viewAction.isDone)
-            ViewState(updatedTasks)
+    private suspend fun applyViewAction(viewAction: ViewAction) =
+        when (viewAction) {
+            is ViewAction.TaskToggle -> {
+                TODO()
+//                val updatedTasks = tasks.toggleTask(viewAction.taskId, viewAction.isDone)
+//                ViewState(updatedTasks)
+            }
+            is ViewAction.TaskDelete -> {
+                TODO()
+//                val updatedTasks = tasks.filter { it.id != viewAction.taskId }
+//                ViewState(updatedTasks)
+            }
+            is ViewAction.TaskAdd -> {
+                tasksRepository.insert(
+                    TaskData(
+                        content = viewAction.content,
+                        isDone = false
+                    )
+                )
+            }
         }
-        is ViewAction.TaskDelete -> {
-            val updatedTasks = tasks.filter { it.id != viewAction.taskId }
-            ViewState(updatedTasks)
-        }
-        is ViewAction.TaskAdd -> {
-            val highestId = tasks.map { it.id }.maxOrNull() ?: 1
-            val newTask = TaskData(
-                id = highestId.inc(),
-                content = viewAction.content,
-                isDone = false
-            )
-            ViewState(tasks + newTask)
-        }
-    }
+}
 
 private fun List<TaskData>.toggleTask(taskId: Long, isDone: Boolean): List<TaskData> =
     map { task ->
