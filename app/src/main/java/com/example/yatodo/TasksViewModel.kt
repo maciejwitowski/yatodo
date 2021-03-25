@@ -18,14 +18,14 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class TasksViewModel @Inject constructor(
-    private val tasksRepository: TasksRepository
+    private val tasksInteractor: TasksInteractor
 ) : ViewModel() {
     private val viewActions = ConflatedBroadcastChannel<ViewAction>()
 
     val viewState = MutableLiveData(ViewState(emptyList()))
 
     init {
-        tasksRepository
+        tasksInteractor
             .getAllTasks()
             .onEach { tasks ->
                 viewState.value = ViewState(tasks)
@@ -45,13 +45,13 @@ class TasksViewModel @Inject constructor(
     private suspend fun applyViewAction(viewAction: ViewAction) =
         when (viewAction) {
             is ViewAction.TaskToggle -> {
-                tasksRepository.toggleDone(viewAction.taskId, viewAction.isDone)
+                tasksInteractor.toggleDone(viewAction.taskId, viewAction.isDone)
             }
             is ViewAction.TaskDelete -> {
-                tasksRepository.delete(viewAction.taskId)
+                tasksInteractor.delete(viewAction.taskId)
             }
             is ViewAction.TaskAdd -> {
-                tasksRepository.insert(
+                tasksInteractor.insert(
                     content = viewAction.content,
                     isDone = false
                 )

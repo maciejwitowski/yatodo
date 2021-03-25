@@ -15,7 +15,7 @@ import kotlinx.coroutines.FlowPreview
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val tasksViewModel by viewModels<TasksViewModel>()
+    private val tasksViewModel by viewModels<TasksViewModel >()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
