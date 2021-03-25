@@ -1,4 +1,4 @@
-package com.example.yatodo
+package com.example.yatodo.tasks
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

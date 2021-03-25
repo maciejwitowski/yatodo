@@ -1,4 +1,4 @@
-package com.example.yatodo
+package com.example.yatodo.tasks
 
 data class TaskData(
     val id: Long,

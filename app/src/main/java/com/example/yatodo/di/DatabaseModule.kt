@@ -1,4 +1,4 @@
-package com.example.yatodo
+package com.example.yatodo.di
 
 import android.content.Context
 import androidx.room.Room

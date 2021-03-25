@@ -1,4 +1,4 @@
-package com.example.yatodo
+package com.example.yatodo.tasks
 
 import com.example.yatodo.db.AppDatabase
 import com.example.yatodo.db.entities.TaskEntity

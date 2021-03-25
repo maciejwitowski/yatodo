@@ -1,4 +1,4 @@
-package com.example.yatodo
+package com.example.yatodo.tasks
 
 import androidx.work.OneTimeWorkRequestBuilder
 import com.example.yatodo.sync.SyncWorker
