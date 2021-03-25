@@ -4,8 +4,9 @@ import com.example.yatodo.db.AppDatabase
 import com.example.yatodo.db.entities.TaskEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class TasksRepository(
+class TasksRepository @Inject constructor(
     appDatabase: AppDatabase
 ) {
     private val tasksDao by lazy { appDatabase.taskDao() }

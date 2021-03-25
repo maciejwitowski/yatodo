@@ -7,17 +7,15 @@ import androidx.activity.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.yatodo.db.AppDatabase
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
 @FlowPreview
 @ExperimentalCoroutinesApi
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val tasksViewModel by viewModels<TasksViewModel> {
-        TasksViewModelFactory(
-            (application as YotodoApp).container.database
-        )
-    }
+    private val tasksViewModel by viewModels<TasksViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,15 +23,5 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppContent(tasksViewModel)
         }
-    }
-}
-
-@ExperimentalCoroutinesApi
-@FlowPreview
-@Suppress("UNCHECKED_CAST")
-class TasksViewModelFactory(private val database: AppDatabase) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        require(modelClass == TasksViewModel::class.java)
-        return TasksViewModel(TasksRepository(database)) as T
     }
 }
