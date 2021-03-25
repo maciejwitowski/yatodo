@@ -6,15 +6,30 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class TasksRepository(
-    private val appDatabase: AppDatabase
+    appDatabase: AppDatabase
 ) {
-    suspend fun insert(taskData: TaskData) { // TODO Move out of main thread by using suspend
-        appDatabase.taskDao().insert(TaskEntity(taskData.content, taskData.isDone))
+    private val tasksDao by lazy { appDatabase.taskDao() }
+
+    suspend fun insert(
+        content: String,
+        isDone: Boolean
+    ) {
+        tasksDao.insert(TaskEntity(0, content, isDone))
+    }
+
+    suspend fun toggleDone(
+        taskId: Long,
+        isDone: Boolean
+    ) {
+        tasksDao.toggleDone(taskId, isDone)
+    }
+
+    suspend fun delete(taskId: Long) {
+        tasksDao.delete(taskId)
     }
 
     fun getAllTasks(): Flow<List<TaskData>> =
-        appDatabase
-            .taskDao()
+        tasksDao
             .getAll()
             .map { taskEntities ->
                 taskEntities.map(TaskEntity::toTaskData)
@@ -23,6 +38,7 @@ class TasksRepository(
 
 private fun TaskEntity.toTaskData() =
     TaskData(
+        id = id,
         content = content,
         isDone = isDone
     )

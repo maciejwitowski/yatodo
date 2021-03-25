@@ -1,6 +1,5 @@
 package com.example.yatodo
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -43,34 +42,19 @@ class TasksViewModel(
     private suspend fun applyViewAction(viewAction: ViewAction) =
         when (viewAction) {
             is ViewAction.TaskToggle -> {
-                TODO()
-//                val updatedTasks = tasks.toggleTask(viewAction.taskId, viewAction.isDone)
-//                ViewState(updatedTasks)
+                tasksRepository.toggleDone(viewAction.taskId, viewAction.isDone)
             }
             is ViewAction.TaskDelete -> {
-                TODO()
-//                val updatedTasks = tasks.filter { it.id != viewAction.taskId }
-//                ViewState(updatedTasks)
+                tasksRepository.delete(viewAction.taskId)
             }
             is ViewAction.TaskAdd -> {
                 tasksRepository.insert(
-                    TaskData(
-                        content = viewAction.content,
-                        isDone = false
-                    )
+                    content = viewAction.content,
+                    isDone = false
                 )
             }
         }
 }
-
-private fun List<TaskData>.toggleTask(taskId: Long, isDone: Boolean): List<TaskData> =
-    map { task ->
-        if (task.id == taskId) {
-            task.copy(isDone = isDone)
-        } else {
-            task
-        }
-    }
 
 data class ViewState(val tasks: List<TaskData>)
 
