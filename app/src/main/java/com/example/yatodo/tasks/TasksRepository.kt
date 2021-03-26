@@ -1,36 +1,34 @@
 package com.example.yatodo.tasks
 
-import com.example.yatodo.db.AppDatabase
-import com.example.yatodo.db.entities.TaskEntity
+import com.example.db.dao.TaskDao
+import com.example.db.entity.TaskEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class TasksRepository @Inject constructor(
-    appDatabase: AppDatabase
+    private val taskDao: TaskDao
 ) {
-    private val tasksDao by lazy { appDatabase.taskDao() }
-
     suspend fun insert(
         content: String,
         isDone: Boolean
     ) {
-        tasksDao.insert(TaskEntity(0, content, isDone))
+        taskDao.insert(TaskEntity(0, content, isDone))
     }
 
     suspend fun toggleDone(
         taskId: Long,
         isDone: Boolean
     ) {
-        tasksDao.toggleDone(taskId, isDone)
+        taskDao.toggleDone(taskId, isDone)
     }
 
     suspend fun delete(taskId: Long) {
-        tasksDao.delete(taskId)
+        taskDao.delete(taskId)
     }
 
     fun getAllTasks(): Flow<List<TaskData>> =
-        tasksDao
+        taskDao
             .getAll()
             .map { taskEntities ->
                 taskEntities.map(TaskEntity::toTaskData)

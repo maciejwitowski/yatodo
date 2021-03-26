@@ -8,3 +8,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Yatodo"
 include ':app'
+include ':db'

@@ -1,10 +1,9 @@
-package com.example.yatodo.db.daos
+package com.example.db.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Update
-import com.example.yatodo.db.entities.TaskEntity
+import com.example.db.entity.TaskEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

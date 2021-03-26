@@ -1,4 +1,4 @@
-package com.example.yatodo.db.entities
+package com.example.db.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

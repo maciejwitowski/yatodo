@@ -1,0 +1,5 @@
+- Gradle scripts -> Kotlin scripts
+- 1 place to declare dependencies versions
+- Ktor or RoR backend with basic REST and GRPC APIs
+- Move Tasks to feature module
+- Better Hilt usage for modules

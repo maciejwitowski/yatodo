@@ -1,8 +1,7 @@
 package com.example.yatodo.di
 
 import android.content.Context
-import androidx.room.Room
-import com.example.yatodo.db.AppDatabase
+import com.example.db.DaoProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,11 +12,9 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
     @Provides
-    fun providesDatabase(@ApplicationContext context: Context): AppDatabase =
-        Room
-            .databaseBuilder(
-                context,
-                AppDatabase::class.java, "yatodo-database"
-            )
-            .build()
+    fun providesDatabase(@ApplicationContext context: Context): DaoProvider =
+        DaoProvider(context)
+
+    @Provides
+    fun providesTaskDao(daoProvider: DaoProvider) = daoProvider.tasksDao
 }
