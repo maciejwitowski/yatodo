@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'com.squareup.wire'
 }
 
 android {
@@ -46,6 +47,10 @@ android {
     }
 }
 
+wire {
+    kotlin {}
+}
+
 dependencies {
     implementation project(':db')
 
@@ -70,6 +75,8 @@ dependencies {
     kapt 'androidx.hilt:hilt-compiler:1.0.0-beta01'
 
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+
+    api "com.squareup.wire:wire-runtime:3.7.0"
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
