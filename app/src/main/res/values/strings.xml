@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Yatodo</string>
     <string name="tasks_screen_title">Tasks</string>
+    <string name="today_screen_title">Today</string>
     <string name="task_content_field">Task content</string>
     <string name="add_task_button">Add</string>
 </resources>
