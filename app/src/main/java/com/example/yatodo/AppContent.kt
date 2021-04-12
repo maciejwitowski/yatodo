@@ -5,6 +5,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.compose.*
 import com.example.yatodo.navigation.Screen
 import com.example.yatodo.tasks.TasksScreen
 import com.example.yatodo.tasks.TasksViewModel
@@ -20,42 +21,53 @@ import kotlinx.coroutines.FlowPreview
 fun AppContent(viewModel: TasksViewModel) {
     YatodoTheme {
         val viewState: ViewState by viewModel.viewState.observeAsState(ViewState(emptyList()))
-        var selected: Screen by remember { mutableStateOf(Screen.Tasks) }
+        val navController = rememberNavController()
+
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentScreen = navBackStackEntry
+            ?.arguments
+            ?.getString(KEY_ROUTE)
+            ?.let { Screen.findByRoute(it) } ?: Screen.Tasks
 
         Scaffold(
             topBar = {
                 TopAppBar(
                     title = {
-                        Text(text = stringResource(selected.resourceId))
+                        Text(text = stringResource(currentScreen.resourceId))
                     }
                 )
             },
             bottomBar = {
-                BottomBar(selected = selected) { screen ->
-                    selected = screen
+                BottomBar(currentScreen) { screen ->
+                    navController.navigate(screen.route) {
+                        popUpTo = navController.graph.startDestination
+                        launchSingleTop = true
+                    }
                 }
             }
         ) {
-            when (selected) {
-                Screen.Tasks -> TasksScreen(viewState.tasks) { viewAction ->
-                    viewModel.onViewAction(
-                        viewAction
-                    )
+            NavHost(navController, startDestination = Screen.Tasks.route) {
+                composable(Screen.Tasks.route) {
+                    TasksScreen(viewState.tasks) { viewAction ->
+                        viewModel.onViewAction(
+                            viewAction
+                        )
+                    }
                 }
-                Screen.Today -> TodayScreen()
+                composable(Screen.Today.route) { TodayScreen() }
             }
         }
     }
 }
 
 @Composable
-fun BottomBar(selected: Screen, onClick: (Screen) -> Unit) {
+fun BottomBar(currentRoute: Screen, onClick: (Screen) -> Unit) {
     BottomNavigation {
         val screens = listOf(Screen.Tasks, Screen.Today)
 
         screens.forEach { screen ->
             BottomNavigationItem(
-                selected = selected == screen,
+                selected = currentRoute == screen,
                 icon = {
                     Icon(
                         painter = painterResource(id = screen.icon),
