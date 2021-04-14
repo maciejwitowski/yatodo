@@ -5,6 +5,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.*
 import com.example.yatodo.navigation.Screen
 import com.example.yatodo.tasks.TasksScreen
@@ -24,10 +25,7 @@ fun AppContent(viewModel: TasksViewModel) {
         val navController = rememberNavController()
 
         val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentScreen = navBackStackEntry
-            ?.arguments
-            ?.getString(KEY_ROUTE)
-            ?.let { Screen.findByRoute(it) } ?: Screen.Tasks
+        val currentScreen = navBackStackEntry?.getScreen() ?: Screen.Tasks
 
         Scaffold(
             topBar = {
@@ -80,3 +78,8 @@ fun BottomBar(currentRoute: Screen, onClick: (Screen) -> Unit) {
         }
     }
 }
+
+private fun NavBackStackEntry.getScreen() =
+    arguments
+        ?.getString(KEY_ROUTE)
+        ?.let { Screen.findByRoute(it) }
